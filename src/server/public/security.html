@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UTC – Security Reports</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <header class="header">
+    <img src="/assets/logo.svg" alt="FF Logo" class="logo" />
+    <div class="brand">
+      <h1>Security Reports</h1>
+      <p>Headers · TLS · HAR · ZAP</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Summary</h2>
+      <div id="summary" class="links"></div>
+    </section>
+
+    <section class="card">
+      <h2>HTTP Security Headers</h2>
+      <pre id="headers" class="output"></pre>
+    </section>
+
+    <section class="card">
+      <h2>TLS (SSL Labs)</h2>
+      <pre id="tls" class="output"></pre>
+    </section>
+
+    <section class="card">
+      <h2>Network Traffic (HAR)</h2>
+      <div class="links">
+        <a id="harLink" class="link" href="#" target="_blank">Download HAR</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>OWASP ZAP Baseline</h2>
+      <div class="links">
+        <a id="zapLink" class="link" href="#" target="_blank">Open ZAP Report</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">© 2025 UTC · Black · White · Purple</footer>
+  <script src="/assets/security.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UTC – Universal Test Catalog</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <header class="header">
+    <img src="/assets/logo.svg" alt="FF Logo" class="logo" />
+    <div class="brand">
+      <h1>Universal Test Catalog</h1>
+      <p>Run web, performance, API and mobile scaffolds via a beautiful UI</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Target</h2>
+      <div class="row">
+        <label for="url">URL</label>
+        <input id="url" type="url" placeholder="https://example.com" />
+      </div>
+      <div class="row options">
+        <label class="checkbox"><input id="lenient" type="checkbox" checked /> Lenient timeouts</label>
+        <label class="checkbox"><input id="a11y" type="checkbox" checked /> Accessibility</label>
+        <label class="checkbox"><input id="a11yStrict" type="checkbox" /> A11Y strict</label>
+        <input id="grep" type="text" placeholder="Grep tests (optional)" />
+      </div>
+      <div class="buttons">
+        <button id="runWeb" class="btn primary">Run Web</button>
+        <button id="runPerf" class="btn">Run Performance</button>
+        <button id="runQuick" class="btn">Quick (Web + Perf)</button>
+        <button id="runSecurity" class="btn">Run Security</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Reports</h2>
+      <div class="links">
+        <a class="link" href="/playwright-report/index.html" target="_blank">Open Playwright HTML Report</a>
+        <a class="link" href="/reports/" target="_blank">Open Lighthouse Reports Folder</a>
+        <a class="link" href="/assets/security.html" target="_blank">Open Security Reports</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Output</h2>
+      <pre id="output" class="output"></pre>
+    </section>
+  </main>
+
+  <footer class="footer">© 2025 UTC · Black · White · Purple</footer>
+  <script src="/assets/app.js" type="module"></script>
+</body>
+</html>
