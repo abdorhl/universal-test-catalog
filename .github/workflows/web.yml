@@ -1,0 +1,80 @@
+name: Web Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Target URL
+        required: true
+        type: string
+      lenient:
+        description: Lenient timeouts
+        required: false
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+      a11y:
+        description: Run accessibility checks
+        required: false
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+      a11yStrict:
+        description: A11Y strict
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+      grep:
+        description: Grep filter
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  run-web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Web Tests
+        env:
+          FORCE_COLOR: "1"
+        run: |
+          node src/index.js web --url "${{ inputs.url }}" \
+            ${{ inputs.lenient == 'true' && '--lenient' || '' }} \
+            ${{ inputs.a11y == 'false' && '--no-a11y' || '' }} \
+            ${{ inputs.a11yStrict == 'true' && '--a11y-strict' || '' }} \
+            ${{ inputs.grep != '' && format('--grep "{0}"', inputs.grep) || '' }}
+
+      - name: Prepare Pages artifact
+        run: |
+          mkdir -p ./public/playwright-report
+          if [ -d playwright-report ]; then cp -R playwright-report/* ./public/playwright-report/; fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

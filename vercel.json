@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "builds": [],
+  "rewrites": [
+    { "source": "/", "destination": "/src/server/public/index.html" },
+    { "source": "/security", "destination": "/src/server/public/security.html" },
+    { "source": "/assets/(.*)", "destination": "/src/server/public/$1" },
+    { "source": "/reports/(.*)", "destination": "/api/report-proxy?path=$1" },
+    { "source": "/playwright-report/(.*)", "destination": "/api/report-proxy?path=playwright-report/$1" }
+  ]
+}

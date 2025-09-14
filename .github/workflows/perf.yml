@@ -1,0 +1,59 @@
+name: Performance Audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Target URL
+        required: true
+        type: string
+      desktop:
+        description: Desktop mode
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  run-perf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Lighthouse
+        env:
+          FORCE_COLOR: "1"
+        run: |
+          node src/index.js perf --url "${{ inputs.url }}" ${{ inputs.desktop == 'true' && '--desktop' || '' }}
+
+      - name: Prepare Pages artifact
+        run: |
+          mkdir -p ./public/reports
+          if [ -d reports ]; then cp -R reports/* ./public/reports/; fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

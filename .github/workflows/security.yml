@@ -1,0 +1,83 @@
+name: Security Suite
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Target URL
+        required: true
+        type: string
+      zap:
+        description: Run OWASP ZAP baseline
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+      tls:
+        description: Include TLS (SSL Labs)
+        required: false
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+      headers:
+        description: Include HTTP security headers scan
+        required: false
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+      har:
+        description: Capture HAR
+        required: false
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  run-security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          npm ci
+
+      - name: Run Security Suite
+        env:
+          FORCE_COLOR: "1"
+        run: |
+          node src/index.js security --url "${{ inputs.url }}" \
+            ${{ inputs.tls == 'true' && '' || '--no-tls' }} \
+            ${{ inputs.headers == 'true' && '' || '--no-headers' }} \
+            ${{ inputs.har == 'true' && '' || '--no-har' }} \
+            ${{ inputs.zap == 'true' && '--zap' || '' }}
+
+      - name: Prepare Pages artifact
+        run: |
+          mkdir -p ./public/reports
+          if [ -d reports ]; then cp -R reports/* ./public/reports/; fi
+          if [ -d playwright-report ]; then mkdir -p ./public/playwright-report && cp -R playwright-report/* ./public/playwright-report/; fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
